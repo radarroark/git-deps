@@ -15,21 +15,21 @@ pub const Options = struct {
 };
 
 pub const Library = struct {
-    step: *std.build.LibExeObjStep,
+    step: *std.Build.Step.Compile,
 
-    pub fn link(self: Library, other: *std.build.LibExeObjStep, opts: Options) void {
+    pub fn link(self: Library, other: *std.Build.Step.Compile, opts: Options) void {
         other.addIncludePath(.{ .cwd_relative = include_dir });
         other.linkLibrary(self.step);
 
         if (opts.import_name) |import_name|
-            other.addAnonymousModule(
+            other.root_module.addAnonymousImport(
                 import_name,
-                .{ .source_file = .{ .path = package_path } },
+                .{ .root_source_file = .{ .path = package_path } },
             );
     }
 };
 
-pub fn create(b: *std.build.Builder, target: std.zig.CrossTarget, optimize: std.builtin.OptimizeMode) Library {
+pub fn create(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) Library {
     const ret = b.addStaticLibrary(.{
         .name = "z",
         .target = target,

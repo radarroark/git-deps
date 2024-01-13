@@ -10,17 +10,17 @@ const root_path = root() ++ "/";
 pub const include_dir = root_path ++ "libgit2/include";
 
 pub const Library = struct {
-    step: *std.build.LibExeObjStep,
+    step: *std.Build.Step.Compile,
 
-    pub fn link(self: Library, other: *std.build.LibExeObjStep) void {
+    pub fn link(self: Library, other: *std.Build.Step.Compile) void {
         other.addIncludePath(.{ .cwd_relative = include_dir });
         other.linkLibrary(self.step);
     }
 };
 
 pub fn create(
-    b: *std.build.Builder,
-    target: std.zig.CrossTarget,
+    b: *std.Build,
+    target: std.Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
 ) !Library {
     const ret = b.addStaticLibrary(.{
@@ -47,14 +47,14 @@ pub fn create(
         "-fno-sanitize=all",
     });
 
-    if (64 == target.toTarget().ptrBitWidth())
+    if (64 == target.result.ptrBitWidth())
         try flags.append("-DGIT_ARCH_64=1");
 
     ret.addCSourceFiles(.{
         .files = srcs,
         .flags = flags.items,
     });
-    if (target.isWindows()) {
+    if (target.result.os.tag == .windows) {
         try flags.appendSlice(&.{
             "-DGIT_WIN32",
             "-DGIT_WINHTTP",
@@ -64,7 +64,7 @@ pub fn create(
             .flags = flags.items,
         });
 
-        if (target.getAbi().isGnu()) {
+        if (target.result.abi == .gnu) {
             ret.addCSourceFiles(.{
                 .files = posix_srcs,
                 .flags = flags.items,
@@ -85,7 +85,7 @@ pub fn create(
         });
     }
 
-    if (target.isLinux())
+    if (target.result.os.tag == .linux)
         try flags.appendSlice(&.{
             "-DGIT_USE_NSEC=1",
             "-DGIT_USE_STAT_MTIM=1",

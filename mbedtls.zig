@@ -1,13 +1,11 @@
 // https://github.com/mattnite/zig-mbedtls
 
 const std = @import("std");
-const Builder = std.build.Builder;
-const CompileStep = std.build.CompileStep;
 
 pub const Library = struct {
-    step: *CompileStep,
+    step: *std.Build.Step.Compile,
 
-    pub fn link(self: Library, other: *CompileStep) void {
+    pub fn link(self: Library, other: *std.Build.Step.Compile) void {
         other.addIncludePath(.{ .cwd_relative = include_dir });
         other.linkLibrary(self.step);
     }
@@ -21,7 +19,7 @@ const root_path = root() ++ "/";
 pub const include_dir = root_path ++ "mbedtls/include";
 const library_include = root_path ++ "mbedtls/library";
 
-pub fn create(b: *Builder, target: std.zig.CrossTarget, optimize: std.builtin.OptimizeMode) Library {
+pub fn create(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) Library {
     const ret = b.addStaticLibrary(.{
         .name = "mbedtls",
         .target = target,
@@ -39,7 +37,7 @@ pub fn create(b: *Builder, target: std.zig.CrossTarget, optimize: std.builtin.Op
     });
     ret.linkLibC();
 
-    if (target.isWindows())
+    if (target.result.os.tag == .windows)
         ret.linkSystemLibrary("ws2_32");
 
     return Library{ .step = ret };

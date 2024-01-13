@@ -38,17 +38,17 @@ pub const include_dir = root_path ++ "libssh2/include";
 const config_dir = root_path ++ "libssh2_extra";
 
 pub const Library = struct {
-    step: *std.build.LibExeObjStep,
+    step: *std.Build.Step.Compile,
 
-    pub fn link(self: Library, other: *std.build.LibExeObjStep) void {
+    pub fn link(self: Library, other: *std.Build.Step.Compile) void {
         other.addIncludePath(.{ .cwd_relative = include_dir });
         other.linkLibrary(self.step);
     }
 };
 
 pub fn create(
-    b: *std.build.Builder,
-    target: std.zig.CrossTarget,
+    b: *std.Build,
+    target: std.Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
 ) Library {
     const ret = b.addStaticLibrary(.{
@@ -65,7 +65,7 @@ pub fn create(
     ret.linkLibC();
 
     ret.defineCMacro("LIBSSH2_MBEDTLS", null);
-    if (target.isWindows()) {
+    if (target.result.os.tag == .windows) {
         ret.defineCMacro("_CRT_SECURE_NO_DEPRECATE", "1");
         ret.defineCMacro("HAVE_LIBCRYPT32", null);
         ret.defineCMacro("HAVE_WINSOCK2_H", null);
@@ -73,7 +73,7 @@ pub fn create(
         ret.defineCMacro("HAVE_SELECT", null);
         ret.defineCMacro("LIBSSH2_DH_GEX_NEW", "1");
 
-        if (target.getAbi().isGnu()) {
+        if (target.result.abi == .gnu) {
             ret.defineCMacro("HAVE_UNISTD_H", null);
             ret.defineCMacro("HAVE_INTTYPES_H", null);
             ret.defineCMacro("HAVE_SYS_TIME_H", null);
