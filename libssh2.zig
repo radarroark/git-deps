@@ -6,34 +6,34 @@ fn root() []const u8 {
     return std.fs.path.dirname(@src().file) orelse unreachable;
 }
 
-const root_path = root() ++ "/";
 const srcs = &.{
-    root_path ++ "libssh2/src/channel.c",
-    root_path ++ "libssh2/src/comp.c",
-    root_path ++ "libssh2/src/crypt.c",
-    root_path ++ "libssh2/src/hostkey.c",
-    root_path ++ "libssh2/src/kex.c",
-    root_path ++ "libssh2/src/mac.c",
-    root_path ++ "libssh2/src/misc.c",
-    root_path ++ "libssh2/src/packet.c",
-    root_path ++ "libssh2/src/publickey.c",
-    root_path ++ "libssh2/src/scp.c",
-    root_path ++ "libssh2/src/session.c",
-    root_path ++ "libssh2/src/sftp.c",
-    root_path ++ "libssh2/src/userauth.c",
-    root_path ++ "libssh2/src/transport.c",
-    root_path ++ "libssh2/src/version.c",
-    root_path ++ "libssh2/src/knownhost.c",
-    root_path ++ "libssh2/src/agent.c",
-    root_path ++ "libssh2/src/mbedtls.c",
-    root_path ++ "libssh2/src/pem.c",
-    root_path ++ "libssh2/src/keepalive.c",
-    root_path ++ "libssh2/src/global.c",
-    root_path ++ "libssh2/src/blowfish.c",
-    root_path ++ "libssh2/src/bcrypt_pbkdf.c",
-    root_path ++ "libssh2/src/agent_win.c",
+    "libssh2/src/channel.c",
+    "libssh2/src/comp.c",
+    "libssh2/src/crypt.c",
+    "libssh2/src/hostkey.c",
+    "libssh2/src/kex.c",
+    "libssh2/src/mac.c",
+    "libssh2/src/misc.c",
+    "libssh2/src/packet.c",
+    "libssh2/src/publickey.c",
+    "libssh2/src/scp.c",
+    "libssh2/src/session.c",
+    "libssh2/src/sftp.c",
+    "libssh2/src/userauth.c",
+    "libssh2/src/transport.c",
+    "libssh2/src/version.c",
+    "libssh2/src/knownhost.c",
+    "libssh2/src/agent.c",
+    "libssh2/src/mbedtls.c",
+    "libssh2/src/pem.c",
+    "libssh2/src/keepalive.c",
+    "libssh2/src/global.c",
+    "libssh2/src/blowfish.c",
+    "libssh2/src/bcrypt_pbkdf.c",
+    "libssh2/src/agent_win.c",
 };
 
+const root_path = root() ++ "/";
 pub const include_dir = root_path ++ "libssh2/include";
 const config_dir = root_path ++ "libssh2_extra";
 
@@ -59,6 +59,7 @@ pub fn create(
     ret.addIncludePath(.{ .cwd_relative = include_dir });
     ret.addIncludePath(.{ .cwd_relative = config_dir });
     ret.addCSourceFiles(.{
+        .root = .{ .cwd_relative = root() },
         .files = srcs,
         .flags = &.{},
     });

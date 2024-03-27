@@ -37,6 +37,7 @@ pub fn create(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
     });
     ret.linkLibC();
     ret.addCSourceFiles(.{
+        .root = .{ .cwd_relative = root() },
         .files = srcs,
         .flags = &.{"-std=c89"},
     });
@@ -45,19 +46,19 @@ pub fn create(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
 }
 
 const srcs = &.{
-    root_path ++ "zlib/adler32.c",
-    root_path ++ "zlib/compress.c",
-    root_path ++ "zlib/crc32.c",
-    root_path ++ "zlib/deflate.c",
-    root_path ++ "zlib/gzclose.c",
-    root_path ++ "zlib/gzlib.c",
-    root_path ++ "zlib/gzread.c",
-    root_path ++ "zlib/gzwrite.c",
-    root_path ++ "zlib/inflate.c",
-    root_path ++ "zlib/infback.c",
-    root_path ++ "zlib/inftrees.c",
-    root_path ++ "zlib/inffast.c",
-    root_path ++ "zlib/trees.c",
-    root_path ++ "zlib/uncompr.c",
-    root_path ++ "zlib/zutil.c",
+    "zlib/adler32.c",
+    "zlib/compress.c",
+    "zlib/crc32.c",
+    "zlib/deflate.c",
+    "zlib/gzclose.c",
+    "zlib/gzlib.c",
+    "zlib/gzread.c",
+    "zlib/gzwrite.c",
+    "zlib/inflate.c",
+    "zlib/infback.c",
+    "zlib/inftrees.c",
+    "zlib/inffast.c",
+    "zlib/trees.c",
+    "zlib/uncompr.c",
+    "zlib/zutil.c",
 };
