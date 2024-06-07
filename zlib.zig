@@ -10,22 +10,13 @@ fn root() []const u8 {
 const root_path = root() ++ "/";
 const package_path = root_path ++ "src/main.zig";
 pub const include_dir = root_path ++ "zlib";
-pub const Options = struct {
-    import_name: ?[]const u8 = null,
-};
 
 pub const Library = struct {
     step: *std.Build.Step.Compile,
 
-    pub fn link(self: Library, other: *std.Build.Step.Compile, opts: Options) void {
+    pub fn link(self: Library, other: *std.Build.Step.Compile) void {
         other.addIncludePath(.{ .cwd_relative = include_dir });
         other.linkLibrary(self.step);
-
-        if (opts.import_name) |import_name|
-            other.root_module.addAnonymousImport(
-                import_name,
-                .{ .root_source_file = .{ .path = package_path } },
-            );
     }
 };
 
